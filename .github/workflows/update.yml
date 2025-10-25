@@ -1,0 +1,36 @@
+name: Update Fork from Upstream
+
+# Stündlicher Trigger
+on:
+  schedule:
+    - cron: "0 * * * *"   # jede Stunde
+  workflow_dispatch:       # manuelles Triggern möglich
+
+jobs:
+  update-fork:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Git konfigurieren
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0   # Volles Repository für Merge
+
+      # 2. Upstream hinzufügen
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/raspberrypi/firmware.git || true
+          git fetch upstream
+
+      # 3. Rebase oder Merge
+      - name: Merge upstream changes
+        run: |
+          git checkout main
+          git merge upstream/main --allow-unrelated-histories --no-edit || echo "Nothing to merge"
+
+      # 4. Push zurück zu Fork
+      - name: Push changes to fork
+        run: |
+          git push origin main
