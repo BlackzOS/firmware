@@ -1,10 +1,5 @@
 name: Update Fork from Upstream
 
-# Stündlicher Trigger
-on:
-  schedule:
-    - cron: "0 * * * *"   # jede Stunde
-  workflow_dispatch:       # manuelles Triggern möglich
 
 jobs:
   update-fork:
